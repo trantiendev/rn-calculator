@@ -11,15 +11,46 @@ import {
 export default class App extends Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      resultText: ''
+    }
+    this.ops = ['DEL','+', '-', '*', '/']
+  }
+
+  calculateResult = () => {
+
   }
 
   buttonPressed = text => {
-    console.log(text)
+    text === '=' && this.calculateResult()
+
+    this.setState({
+      resultText: this.state.resultText + text
+    })
+  }
+
+  operate = operation => {
+    switch(operation) {
+      case 'DEL':
+        let text = this.state.resultText.split('')
+        text.pop()
+        this.setState({
+          resultText: text.join('')
+        })
+        break
+      default:
+        const lastChar = this.state.resultText.split('').pop()
+        console.log(lastChar)
+        if (this.ops.indexOf(lastChar) > 0) return
+
+        if(this.state.resultText === '') return
+        this.setState({
+          resultText: this.state.resultText + operation
+        })
+    }
   }
 
   render() {
-    let ops = ['+', '-', '*', '/']
     let rows = []
     let nums = [[1,2,3], [4,5,6], [7,8,9], ['.', 0, '=']]
     for (let i = 0; i < 4; i++) {
@@ -37,20 +68,22 @@ export default class App extends Component {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.result}>
-          <Text style={styles.resultText}>11*11</Text>
+          <Text style={styles.resultText}>{this.state.resultText}</Text>
         </View>
+
         <View style={styles.calculation}>
           <Text style={styles.calculationText}>121</Text>
         </View>
+
         <View style={styles.buttons}>
           <View style={styles.numbers}>
             {rows}
           </View>
           <View style={styles.operations}>
             {
-              ops.map( item => {
+              this.ops.map((item, i) => {
                 return (
-                  <TouchableOpacity style={styles.btn}>
+                  <TouchableOpacity style={styles.btn} key={i} onPress={() => this.operate(item)}>
                     <Text style={[styles.btnText, styles.white]}>{item}</Text>
                   </TouchableOpacity>
                 )
@@ -92,7 +125,7 @@ const styles = StyleSheet.create({
   },
   result: {
     flex: 2,
-    backgroundColor: 'red',
+    backgroundColor: '#31394C',
     justifyContent: 'center',
     alignItems: 'flex-end'
   },
