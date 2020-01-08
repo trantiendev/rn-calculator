@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Button,
   TouchableOpacity,
   SafeAreaView
 } from 'react-native';
@@ -12,17 +11,37 @@ export default class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      resultText: ''
+      resultText: '',
+      calculationText: ''
     }
     this.ops = ['DEL','+', '-', '*', '/']
   }
 
   calculateResult = () => {
+    const text = this.state.resultText
+    this.setState({
+      calculationText: eval(text)
+    })
+  }
 
+  validate = () => {
+    const text = this.state.resultText
+
+    switch(text.slice(-1)) {
+      case '+':
+      case '-':
+      case '*':
+      case '/':
+        return false
+    }
+
+    return true
   }
 
   buttonPressed = text => {
-    text === '=' && this.calculateResult()
+    if (text === '=') {
+      return this.validate() && this.calculateResult()
+    }
 
     this.setState({
       resultText: this.state.resultText + text
@@ -40,7 +59,6 @@ export default class App extends Component {
         break
       default:
         const lastChar = this.state.resultText.split('').pop()
-        console.log(lastChar)
         if (this.ops.indexOf(lastChar) > 0) return
 
         if(this.state.resultText === '') return
@@ -57,7 +75,7 @@ export default class App extends Component {
       let row = []
       for (let j = 0; j < 3; j++) {
         row.push( 
-          <TouchableOpacity style={styles.btn} onPress={() => this.buttonPressed(nums[i][j])}>
+          <TouchableOpacity key={nums[i][j]} style={styles.btn} onPress={() => this.buttonPressed(nums[i][j])}>
             <Text style={styles.btnText}>{nums[i][j]}</Text>
           </TouchableOpacity>
         )
@@ -72,7 +90,7 @@ export default class App extends Component {
         </View>
 
         <View style={styles.calculation}>
-          <Text style={styles.calculationText}>121</Text>
+        <Text style={styles.calculationText}>{this.state.calculationText}</Text>
         </View>
 
         <View style={styles.buttons}>
@@ -101,12 +119,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   resultText: {
-    fontSize: 24,
-    color: 'white'
+    fontSize: 32,
   },
   calculationText: {
-    fontSize: 20,
-    color: 'white'
+    fontSize: 28,
   },
   btn: {
     flex: 1,
@@ -115,7 +131,8 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch'
   },
   btnText: {
-    fontSize: 30
+    fontSize: 30,
+    color: '#fff'
   },
   row: {
     flexDirection: 'row',
@@ -124,16 +141,18 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   result: {
-    flex: 2,
-    backgroundColor: '#31394C',
+    flex: 1,
+    backgroundColor: '#fff',
     justifyContent: 'center',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
+    padding: 20
   },
   calculation: {
     flex: 1,
-    backgroundColor: 'green',
+    backgroundColor: '#fff',
     justifyContent: 'center',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
+    padding: 20
   },
   buttons: {
     flex: 7,
@@ -141,13 +160,13 @@ const styles = StyleSheet.create({
   },
   numbers: {
     flex: 3,
-    backgroundColor: 'yellow'
+    backgroundColor: '#434343'
   },
   operations: {
     flex: 1,
     justifyContent: 'space-around',
     alignItems: 'stretch',
-    backgroundColor: 'black'
+    backgroundColor: '#636363'
   },
   white: {
     color: '#fff'
